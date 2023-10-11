@@ -1,60 +1,57 @@
-const server=require("./config/server")
-const baseRouter=require("./route/router")
-const auth = require('./Middleware/auth')
+// const Hapi = require('@hapi/hapi');
 
+// const people = { // our "users database"
+//     1: {
+//       id: 1,
+//       name: 'Jen Jones'
+//     }
+// };
 
-const init=async()=>{
-     
-  
+// // bring your own validation function
+// const validate = async function (decoded, request, h) {
 
-      server.route([{
-        method:'GET',
-        path:'/',   
-        handler:(Request,h)=>{
-            return "<h1>Hello world</h1>"
-        }
-    },
-    {
-            method: 'GET',
-            path: '/hello/{user}',
-            handler: function (request, h) {
-        
-                return `Hello ${request.params.user}!`;
-            }
-      },{
-        method: 'GET',
-        path: '/user/{users?}',
-        handler: function (request, h) {
-    
-            const user = request.params.users ? request.params.users : 'stranger';
-    
-            return `Hello ${user}!`;
-        }
-    },{
-        method: 'GET',
-        path: '/Users/{user?}',
-        handler: function (request, h) {
-    
-            return `Hello ${request.query.name}!`;
-        }
-    }]),
+//     // do your checks to see if the person is valid
+//     if (!people[decoded.id]) {
+//       return { isValid: false };
+//     }
+//     else {
+//       return { isValid: true };
+//     }
+// };
 
+// const init = async () => {
+//   const server = new Hapi.server({ port: 4000 });
+//   // include our module here ↓↓, for example, require('hapi-auth-jwt2')
+//   await server.register(require('hapi-auth-jwt2'));
+//   server.auth.strategy('jwt', 'jwt',
+//   { key: 'NeverShareYourSecret', // Never Share your secret key
+//     validate  // validate function defined above
+//   });
 
-    // await server.register({
-    //     plugin: auth,
-    //   });
+//   server.auth.default('jwt');
 
-
-    await server.register(baseRouter)
-
-
-await server.start()
-console.log(`server is running on : ${server.info.uri}`)
-}
-
-process.on("unhandledRejection", err=>{
-  console.log(err)
-  process.exit(1)
-})
-
-init()
+//   server.route([
+//     {
+//       method: "GET", path: "/", config: { auth: false },
+//       handler: function(request, h) {
+//         return {text: 'Token not required'};
+//       }
+//     },
+//     {
+//       method: 'GET', path: '/restricted', config: { auth: 'jwt' },
+//       handler: function(request, h) {
+//         const response = h.response({text: 'You used a Token!'});
+//         response.header("Authorization", request.headers.authorization);
+//         return response;
+//       }
+//     }
+//   ]);
+//   await server.start();
+//   return server;
+// }
+// init().then(server => {
+//   console.log('Server running at:', server.info.uri);
+// })
+// .catch(err => {
+//   console.log(err);
+// });

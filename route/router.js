@@ -1,16 +1,17 @@
 const {createUserController,login}=require("../Controller/createUser")
-const readUserController=require("../Controller/readUser")
+const {readUserController,getUser}=require("../Controller/readUser")
 const updatedUserController=require("../Controller/updateUser")
 const deleteUserController=require("../Controller/deleteUser")
-const auth=require("../Middleware/auth")
 
 const router=[{
     method: 'POST',
     path: '/post',
+    config: { auth: false },
     handler: createUserController,
 },{
     method: 'POST',
     path: '/login',
+    config: { auth: false },
     handler: login,
 },
 {
@@ -18,19 +19,24 @@ const router=[{
     path: '/users',
   
         handler: readUserController,
-        // config: {
-        //     auth: "auth.strategy.name", // Require JWT authentication for this route
-        //     plugins: {
-        //       hapiAuthorization: { roles: ['admin'] }, // Require 'admin' role for authorization
-        //     },
-        //   },
-},{
+        config: { auth: "jwt" }
+},
+{
+    method: 'GET',
+    path: '/users/params',
+  
+        handler: getUser,
+        config: { auth: "jwt" }
+},
+{
     method: 'PUT',
     path: '/users/{id}',
+    config: { auth: "jwt" },
     handler: updatedUserController,
 },{
     method: 'DELETE',
     path: '/users/{id}',
+    config: { auth: "jwt" },
     handler: deleteUserController
 }];
 
