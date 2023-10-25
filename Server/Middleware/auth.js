@@ -1,6 +1,8 @@
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const jwt=require("jsonwebtoken")
+
 // const jwt = require('jsonwebtoken');
 // const server=require("../config/server")
 // const HapiJwt = require('hapi-auth-jwt2')
@@ -75,6 +77,8 @@ const auth =  (server) => {
   // Set the default strategy
   server.auth.default('jwt');
 };
+
+
 
 module.exports = auth;
 

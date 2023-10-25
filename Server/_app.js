@@ -1,10 +1,54 @@
 const server=require("./config/server")
-const baseRouter=require("./route/router")
+const baseRouter=require("./route/index")
 const auth = require('./Middleware/auth')
-
+const Inert = require('@hapi/inert');
+const Vision = require('@hapi/vision');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('./package');
 
 const init=async()=>{
-     
+
+  const swaggerOptions = {
+    documentationPath: '/docs',
+  
+    info:{
+        title:'Test API Documentation with authentication',
+        version:Pack.version,
+    },
+    securityDefinitions: {
+        jwt: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header'
+        }
+    },
+    security: [{ jwt: [] }],
+    schemes: ['http','https'],
+    grouping: 'tags'
+}
+
+
+// Adding plugins for swagger docs;
+await server.register([
+    Inert,
+    Vision,
+    {
+        plugin:HapiSwagger,
+        options:swaggerOptions
+    }
+])
+ 
+
+  // await server.register([Inert,Vision, {
+  //   plugin: HapiSwagger,
+  //   options: {
+  //     info: {
+  //       title: 'Your API Documentation',
+  //       version: '1.0.0',
+  //     },
+  //   },
+  // }]); 
+  
     await server.register(require('hapi-auth-jwt2'))
 
     //   server.route([{
