@@ -23,3 +23,9 @@ model Post {
   author    User    @relation(fields: [authorId], references: [id])
   authorId  Int
 }
+
+model Image {
+  id    Int     @id @default(autoincrement())
+  file_name String
+  file_ext  String 
+}

@@ -54,6 +54,8 @@ const getUser = async (request, h) => {
     }
 }
 
+
+
 const updatedUser=async (request, h) => {
     try {
         const userId = parseInt(request.params.id);
@@ -82,18 +84,104 @@ const deleteUser=async (request, h) => {
     }
 }
 
-const fileUpload = async(req, res)=>{
+const fileUpload = async(req, h)=>{
+
+//     try {
+//         console.log('Received payload:', request.payload);
+         
+//           const { file } = request.payload;
+//           if (!file) {
+//             return h.response('No file uploaded.').code(400);
+//           }
+//           const uploadPath = Path.join(__dirname,"../Uploads",file.hapi.filename);
+         
+//           const fileStream = fs.createWriteStream(uploadPath);
+         
+//           const fileUpload =await  new Promise((resolve, reject) => {
+//             file.on('data', (data) => {
+//               fileStream.write(data);
+//             });
+         
+//             file.on('end', () => {
+//               fileStream.end();
+//               resolve('File uploaded successfully.');
+//             });
+         
+//             file.on('error', (err) => {
+//               reject(err);
+//             });
+//           })
+//           await prisma.Image.create({
+//             data:{
+//               filename:file.hapi.filename,
+//               path:""
+//             }
+//           })
+//           return h.response('File uploaded successfully.'+ `file name ${file.hapi.filename}`).code(201)
+//         } catch (error) {
+//           console.log(error.message)
+//           return h.response('Error fetching image links').code(500);
+//         }
+
+
+
+
+
     try {
+        const { file } = req.payload;
+          if (!file) {
+            return h.response('No file uploaded.').code(400);
+          }
         console.log(__dirname)
-        fs.createWriteStream(__dirname + "../../uploads/" + req.payload.file.filename)
-        
-        let details = {
-            msg: 'File upload successfull'
-        }
-        return details
+        const fileStream =  fs.createWriteStream(__dirname + "../../uploads/" + file.hapi.filename)
+
+        await new Promise((res,rej)=>{
+         try{
+          file.on("data",(data)=>{
+          fileStream.write(data)
+
+          })
+          file.on("end",()=>{
+            res("file upload successfully")
+          })
+         }catch(err){
+            rej(err)
+         }
+        })
+
+
+         await prisma.Image.create({
+            data:{
+                file_name:file.hapi.filename,
+                file_ext:""
+
+            },
+        });
+    return h.response('File uploaded successfully.'+ `file name ${file.hapi.filename}`).code(201)
+
     } catch (error) {
         console.log(error)
+        return h.response('Error fetching image links').code(500);
     }
 }
-module.exports={createUserController:createUser,deleteUser,readUserController:readUser,getUser,updatedUser,fileUpload}   
+
+const getImage=async (request, h) => {
+    try {
+    
+        const Image = await prisma.Image.findMany({where:
+        {file_name:request.params.file_name}    
+        });
+     
+       
+     return h.file(__dirname + "../../uploads/" + request.params.file_name)
+          
+                
+
+            
+    } catch (error) {
+        console.error(error);
+        return h.response({ status: 'error', message: 'Internal Server Error' }).code(500);
+    }
+}
+module.exports={createUserController:createUser,deleteUser,readUserController:readUser,getUser,updatedUser,getImage,fileUpload}   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

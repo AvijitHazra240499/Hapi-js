@@ -1,7 +1,7 @@
-const {createUserController,deleteUser,readUserController,getUser,updatedUser,fileUpload}=require("../../Controller/crud")
+const {createUserController,getImage,deleteUser,readUserController,getUser,updatedUser,fileUpload}=require("../../Controller/crud")
 const login=require("../../Controller/login")
 const Joi = require('joi');
-
+// const image=require("../../Controller/image")
 const router=[{
     method: 'POST',
     path: '/post',
@@ -116,7 +116,7 @@ const router=[{
 		method:'post',
 		options:{
 			payload: {
-                output: 'file',
+                output: 'stream',
                 multipart: true
             },
             auth:false,
@@ -136,6 +136,23 @@ const router=[{
                         .description('file')
                 })
             },
+        }
+     }, 
+     {
+        path:'/{file_name}',
+		method:'get',
+		options:{
+			
+            auth:false,
+			handler: getImage,
+            description:"File upload",
+        	notes:'file-upload',
+        	tags:['api'],
+            validate: {
+                params: Joi.object({
+                    file_name:Joi.string().required()
+                })
+            }
         }
      }
 ];
